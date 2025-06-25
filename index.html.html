@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CT Bend - Inventory Request Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 3rem auto;
+            padding: 2.5rem;
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .form-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .form-subtitle {
+            text-align: center;
+            color: #4b5563;
+            margin-bottom: 2rem;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 0.5rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #2563EB;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+        .form-button {
+            width: 100%;
+            padding: 1rem;
+            background-color: #1D4ED8;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .form-button:hover {
+            background-color: #1E40AF;
+        }
+        #message {
+            margin-top: 1.5rem;
+            text-align: center;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background-color: #E0E7FF;
+            color: #312E81;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h1 class="form-title">Inventory Request</h1>
+        <p class="form-subtitle">For CT Bend</p>
+
+        <form id="inventoryRequestForm">
+            <div class="space-y-6">
+                <div>
+                    <label for="customer_name" class="form-label">Your Name*</label>
+                    <input type="text" id="customer_name" name="customer_name" class="form-input" required>
+                </div>
+
+                <div>
+                    <label for="organization_name" class="form-label">Organization Name</label>
+                    <input type="text" id="organization_name" name="organization_name" class="form-input">
+                </div>
+                
+                 <div>
+                    <label for="phone_number" class="form-label">Phone Number*</label>
+                    <input type="tel" id="phone_number" name="phone_number" class="form-input" required>
+                </div>
+                
+                <!-- Address Fields -->
+                <fieldset>
+                    <legend class="form-label mb-2">Delivery Address*</legend>
+                    <div class="grid grid-cols-1 sm:grid-cols-6 gap-4">
+                        <div class="sm:col-span-6">
+                            <label for="street_address" class="sr-only">Street Address</label>
+                            <input type="text" id="street_address" name="street_address" placeholder="Street Address" class="form-input" required>
+                        </div>
+
+                        <div class="sm:col-span-2">
+                             <label for="city" class="sr-only">City</label>
+                            <input type="text" id="city" name="city" placeholder="City" class="form-input" required>
+                        </div>
+
+                        <div class="sm:col-span-2">
+                             <label for="state" class="sr-only">State</label>
+                            <input type="text" id="state" name="state" placeholder="State" class="form-input" required>
+                        </div>
+
+                        <div class="sm:col-span-2">
+                             <label for="zip_code" class="sr-only">Zip Code</label>
+                            <input type="text" id="zip_code" name="zip_code" placeholder="Zip Code" class="form-input" required>
+                        </div>
+                    </div>
+                </fieldset>
+                
+                <div>
+                    <label for="inventory_request" class="form-label">Inventory Request*</label>
+                    <textarea id="inventory_request" name="inventory_request" rows="5" class="form-textarea" placeholder="Please list the items and quantities you are requesting..." required></textarea>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <button type="submit" class="form-button">Submit Request</button>
+            </div>
+        </form>
+        <div id="message" class="hidden mt-6"></div>
+    </div>
+
+    <script>
+        document.getElementById('inventoryRequestForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission behavior
+
+            // --- 1. Get Form Data ---
+            const customerName = document.getElementById('customer_name').value;
+            const organizationName = document.getElementById('organization_name').value;
+            const phoneNumber = document.getElementById('phone_number').value;
+            const streetAddress = document.getElementById('street_address').value;
+            const city = document.getElementById('city').value;
+            const state = document.getElementById('state').value;
+            const zipCode = document.getElementById('zip_code').value;
+            const requestDetails = document.getElementById('inventory_request').value;
+
+            const fullAddress = `${streetAddress}\n${city}, ${state} ${zipCode}`;
+
+            // --- 2. Construct the Email Body ---
+            // We use encodeURIComponent to ensure all characters are safe for a URL
+            const subject = encodeURIComponent(`Inventory Request from ${customerName}`);
+            
+            const body = encodeURIComponent(
+`Hello CT Bend Support,
+
+A new inventory request has been submitted with the following details:
+
+Customer Name: ${customerName}
+Organization: ${organizationName || 'N/A'}
+Phone Number: ${phoneNumber}
+Delivery Address:
+${fullAddress}
+
+-------------------------------------
+Requested Items:
+${requestDetails}
+-------------------------------------
+
+Thank you,
+${customerName}`
+            );
+
+            // --- 3. Create the mailto link ---
+            const mailtoLink = `mailto:support@ctbend.com?subject=${subject}&body=${body}`;
+
+            // --- 4. Open the user's email client ---
+            window.location.href = mailtoLink;
+            
+            // --- 5. Display a confirmation message on the page ---
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = 'Thank you! Please complete sending the pre-filled email in your mail application to finalize your request.';
+            messageDiv.classList.remove('hidden');
+        });
+    </script>
+
+</body>
+</html>
